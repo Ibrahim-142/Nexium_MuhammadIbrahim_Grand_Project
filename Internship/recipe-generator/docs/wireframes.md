@@ -1,4 +1,4 @@
-D:\NEX2\Internship\resume-tailor\public\Wireframe.png
+D:\NEX2\Internship\resume-tailor\public\Wireframe.png //img of wireframe
 # Wireframe – Recipe Generator
 
 ## Page: Home (After Login)
