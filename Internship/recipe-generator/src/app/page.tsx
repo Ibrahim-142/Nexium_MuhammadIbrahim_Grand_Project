@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 
 export default function HomePage() {
   const router = useRouter()
+  const [checking, setChecking] = useState(true)
 
   useEffect(() => {
     const supabase = createBrowserClient(
@@ -18,17 +19,25 @@ export default function HomePage() {
         data: { session },
       } = await supabase.auth.getSession()
 
+      setChecking(false)
+
       if (session) {
-        router.push('/dashboard') // Redirect once session is available
+        router.push('/dashboard')
+      } else {
+        router.push('/login')
       }
     }
 
     handleSession()
   }, [router])
 
-  return (
-    <main className="flex justify-center items-center h-screen">
-      <p>Redirecting...</p>
-    </main>
-  )
+  if (checking) {
+    return (
+      <main className="flex justify-center items-center h-screen">
+        <p>Redirecting...</p>
+      </main>
+    )
+  }
+
+  return null // in case redirection fails for some reason
 }

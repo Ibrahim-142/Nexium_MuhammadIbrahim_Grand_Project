@@ -10,7 +10,17 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    const { error } = await supabase.auth.signInWithOtp({ email })
+
+    const redirectTo =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:3000'
+        : 'https://your-vercel-domain.vercel.app'
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: redirectTo }
+    })
+
     if (error) setError(error.message)
     else setSent(true)
   }
