@@ -39,8 +39,8 @@ export default function LoginPage() {
         <button className="bg-blue-600 text-white px-4 py-2 rounded" type="submit">
           Send Magic Link
         </button>
-        {sent && <p className="text-green-600">✅ Magic link sent!</p>}
-        {error && <p className="text-red-500">❌ {error}</p>}
+        {sent && <p className="text-green-600">Magic link sent!</p>}
+        {error && <p className="text-red-500">{error}</p>}
       </form>
     </div>
   )
