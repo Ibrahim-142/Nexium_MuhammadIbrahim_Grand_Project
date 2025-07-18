@@ -1,0 +1,9 @@
+import mongoose, { Schema, models } from 'mongoose'
+
+const SavedRecipeSchema = new Schema({
+  userEmail: { type: String, required: true },
+  recipeName: { type: String, required: true },
+  recipeContent: { type: String, required: true },
+}, { timestamps: true })
+
+export const SavedRecipe = models.SavedRecipe || mongoose.model('SavedRecipe', SavedRecipeSchema)

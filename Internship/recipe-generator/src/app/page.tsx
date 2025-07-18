@@ -39,5 +39,5 @@ export default function HomePage() {
     )
   }
 
-  return null // in case redirection fails for some reason
+  return null 
 }
