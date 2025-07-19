@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
@@ -11,14 +10,13 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const redirectTo =
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:3000'
-        : 'https://your-vercel-domain.vercel.app'
+    const redirectTo = process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: redirectTo }
+      options: {
+        emailRedirectTo: redirectTo,
+      },
     })
 
     if (error) setError(error.message)
@@ -35,11 +33,20 @@ export default function LoginPage() {
           placeholder="you@example.com"
           onChange={(e) => setEmail(e.target.value)}
           className="border p-2 w-full"
+          required
         />
-        <button className="bg-blue-600 text-white px-4 py-2 rounded" type="submit">
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+          type="submit"
+        >
           Send Magic Link
         </button>
-        {sent && <p className="text-green-600">Magic link sent!</p>}
+
+        {sent && (
+          <p className="text-green-600">
+            Magic link sent! Check your email to log in.
+          </p>
+        )}
         {error && <p className="text-red-500">{error}</p>}
       </form>
     </div>
