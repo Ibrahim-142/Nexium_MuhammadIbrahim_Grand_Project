@@ -36,7 +36,7 @@ export default function Dashboard() {
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
-      setMessage({ type: 'error', text: '❗ Please enter something to generate a recipe.' })
+      setMessage({ type: 'error', text: 'Please enter something to generate a recipe.' })
       return
     }
 
@@ -47,7 +47,7 @@ export default function Dashboard() {
       setWantsToSave(false)
       setLoadingGenerate(true)
 
-      const res = await fetch('http://localhost:5678/webhook/b0ca536a-92b9-4dc2-a2c6-2e3c1e506d52/chat', {
+      const res = await fetch('http://localhost:5678/webhook/e01d3830-43bf-427e-9f4f-2314970979ba/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -62,7 +62,7 @@ export default function Dashboard() {
       setResult(data.output)
       setShowSavePrompt(true)
     } catch {
-      setMessage({ type: 'error', text: '❌ Error generating recipe. Please try again.' })
+      setMessage({ type: 'error', text: ' Error generating recipe. Please try again.' })
     } finally {
       setLoadingGenerate(false)
     }
@@ -70,7 +70,7 @@ export default function Dashboard() {
 
   const handleSave = async () => {
     if (!recipeName.trim() || !result.trim()) {
-      return setMessage({ type: 'error', text: '❗ Enter a recipe name before saving.' })
+      return setMessage({ type: 'error', text: 'Enter a recipe name before saving.' })
     }
 
     try {
@@ -90,7 +90,7 @@ export default function Dashboard() {
       const data = await res.json()
 
       if (data.success) {
-        setMessage({ type: 'success', text: '✅ Recipe saved successfully!' })
+        setMessage({ type: 'success', text: ' Recipe saved successfully!' })
         setShowSavePrompt(false)
         setWantsToSave(false)
         setRecipeName('')
@@ -98,7 +98,7 @@ export default function Dashboard() {
         throw new Error(data.error || 'Unknown error')
       }
     } catch {
-      setMessage({ type: 'error', text: '❌ Failed to save recipe. Please try again.' })
+      setMessage({ type: 'error', text: 'Failed to save recipe. Please try again.' })
     } finally {
       setLoadingSave(false)
     }

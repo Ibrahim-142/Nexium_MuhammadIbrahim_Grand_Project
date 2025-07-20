@@ -1,4 +1,5 @@
 'use client'
+
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
@@ -27,8 +28,25 @@ export default function LoginPage() {
     })
 
     setLoading(false)
-    if (error) setError(error.message)
-    else setSent(true)
+
+    if (error) {
+      setError(error.message)
+    } else {
+      setSent(true)
+      try {
+        await fetch('http://localhost:5678/webhook/e01d3830-43bf-427e-9f4f-2314970979ba/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId: email,
+            chatInput: '__init__',
+          }),
+        })
+        console.log('Assistant session initialized')
+      } catch (err) {
+        console.error('Failed to initialize assistant session:', err)
+      }
+    }
   }
 
   return (
@@ -48,22 +66,28 @@ export default function LoginPage() {
             Get instant recipe ideas from your ingredients. No signup, no fluff.
           </p>
         </motion.div>
+
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
-          className="mt-10 w-full max-w-md mx-auto bg-white dark:bg-slate-900 shadow-2xl rounded-2xl p-8 border border-slate-200 dark:border-slate-800"
+          transition={{ type: 'spring', stiffness: 120, damping: 12 }}
+          className="mt-10 w-full max-w-md mx-auto bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-xl rounded-3xl p-10 border border-slate-200 dark:border-slate-800 space-y-6"
         >
-          <h2 className="text-2xl font-semibold mb-6 text-slate-800 dark:text-white">Sign in with Email</h2>
+          <h2 className="text-2xl font-bold text-center text-slate-800 dark:text-white">Sign in with Email</h2>
+
           <AnimatePresence>
             {sent && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mb-4 p-4 rounded-lg bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 flex items-center gap-2 text-sm border border-green-300 dark:border-green-700"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 dark:bg-green-900 text-sm font-medium text-green-800 dark:text-green-100 border border-green-300 dark:border-green-700"
+                aria-live="polite"
               >
-                <CheckCircle className="w-4 h-4" /> Magic link sent! Check your inbox.
+                <div className="p-1 bg-green-200 dark:bg-green-700 rounded-full">
+                  <CheckCircle className="w-4 h-4" />
+                </div>
+                Magic link sent! Check your inbox.
               </motion.div>
             )}
           </AnimatePresence>
@@ -74,31 +98,38 @@ export default function LoginPage() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mb-4 p-4 rounded-lg bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100 flex items-center gap-2 text-sm border border-red-300 dark:border-red-700"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 dark:bg-red-900 text-sm font-medium text-red-800 dark:text-red-100 border border-red-300 dark:border-red-700"
+                aria-live="polite"
               >
-                <XCircle className="w-4 h-4" /> {error}
+                <div className="p-1 bg-red-200 dark:bg-red-700 rounded-full">
+                  <XCircle className="w-4 h-4" />
+                </div>
+                {error}
               </motion.div>
             )}
           </AnimatePresence>
 
           <form onSubmit={handleLogin} className="space-y-5 text-left">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-slate-700 dark:text-slate-300">Email address</Label>
+              <Label htmlFor="email" className="text-slate-700 dark:text-slate-300">
+                Email address
+              </Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="you@example.com"
                 required
+                aria-label="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="dark:bg-slate-800 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
+                className="dark:bg-slate-800 dark:border-slate-600 dark:text-white dark:placeholder-slate-400 focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 transition-shadow"
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:cursor-pointer hover:bg-indigo-700 text-white text-md transition duration-200"
+              className="hover:cursor-pointer w-full bg-indigo-600 hover:bg-indigo-700 hover:shadow-md text-white font-semibold py-2.5 rounded-lg transition duration-200"
             >
               {loading ? (
                 <>
