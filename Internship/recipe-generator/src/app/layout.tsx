@@ -14,16 +14,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className="scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body
         className={`
           ${geistSans.variable} ${geistMono.variable}
           antialiased
-          bg-gradient-to-br from-indigo-50 via-white to-slate-100 
-          dark:from-slate-900 dark:via-slate-950 dark:to-slate-900
-          text-slate-800 dark:text-slate-100
           min-h-screen
+          text-foreground
+          bg-gradient-to-br from-indigo-100 via-white to-pink-100
+          dark:from-slate-900 dark:via-slate-950 dark:to-slate-900
+          bg-fixed bg-no-repeat
           transition-colors duration-300
+          selection:bg-primary/20 selection:text-primary
         `}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
