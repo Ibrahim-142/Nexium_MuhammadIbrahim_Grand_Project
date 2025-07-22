@@ -88,43 +88,57 @@ export default function Dashboard() {
       setLoadingGenerate(false)
     }
   }
-
-  const handleSave = async () => {
-    if (!recipeName.trim()) {
-      setErrorMessage('Please enter a recipe name before saving.')
-      return
-    }
-
-    try {
-      setLoadingSave(true)
-      setErrorMessage('')
-      setSuccessMessage('')
-
-      const res = await fetch('/api/save-recipe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userEmail: user?.email,
-          recipeName,
-          recipeContent: result,
-        }),
-      })
-
-      const data = await res.json()
-
-      if (data.success) {
-        setSuccessMessage('Saved successfully.')
-        setShowDialog(false)
-        setRecipeName('')
-      } else {
-        throw new Error(data.error || 'Unknown error')
-      }
-    } catch {
-      setErrorMessage('Failed to save recipe. Please try again.')
-    } finally {
-      setLoadingSave(false)
-    }
+const handleSave = async () => {
+  if (!recipeName.trim()) {
+    setErrorMessage('Please enter a recipe name before saving.')
+    return
   }
+
+  try {
+    setLoadingSave(true)
+    setErrorMessage('')
+    setSuccessMessage('')
+
+    const isRecipe = (() => {
+      const lower = result.toLowerCase()
+      return (
+        lower.includes('ingredients:') &&
+        lower.includes('instructions:') &&
+        /(\d+\.\s)/.test(lower) &&
+        lower.split('\n').some(line => line.trim().startsWith('-'))
+      )
+    })()
+
+    const label = isRecipe ? 'recipe' : 'response'
+
+    const res = await fetch('/api/save-recipe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userEmail: user?.email,
+        recipeName,
+        recipeContent: result,
+        contentLabel: label,
+      }),
+    })
+
+    const data = await res.json()
+
+    if (data.success) {
+      setSuccessMessage('Saved successfully.')
+      setShowDialog(false)
+      setRecipeName('')
+    } else {
+      throw new Error(data.error || 'Unknown error')
+    }
+  } catch {
+    setErrorMessage('Failed to save recipe. Please try again.')
+  } finally {
+    setLoadingSave(false)
+  }
+}
+
+
 
   if (loadingUser) {
     return (
@@ -230,8 +244,10 @@ export default function Dashboard() {
   <DialogContent className="rounded-xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-2xl border border-white/20 dark:border-white/10">
     <DialogHeader>
       <DialogTitle className="text-lg text-foreground">Save this recipe</DialogTitle>
-      <DialogDescription>
-      </DialogDescription>
+     <DialogDescription>
+  Don’t worry. We autodetect whether you are saving a Recipe or a Response based on our predefined Groq response format, keywords, and structure.
+</DialogDescription>
+
     </DialogHeader>
 
     <Input
