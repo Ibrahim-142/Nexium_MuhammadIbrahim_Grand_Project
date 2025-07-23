@@ -34,7 +34,7 @@ export default function LoginPage() {
     } else {
       setSent(true)
       try {
-        await fetch('http://localhost:5678/webhook/e01d3830-43bf-427e-9f4f-2314970979ba/chat', {
+        await fetch('http://localhost:5678/webhook/e41dc0ad-9a7f-4795-860d-a26f64bd1b85/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

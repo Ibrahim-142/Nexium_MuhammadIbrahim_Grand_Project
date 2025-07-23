@@ -65,7 +65,7 @@ export default function Dashboard() {
       setSuccessMessage('')
       setLoadingGenerate(true)
 
-      const res = await fetch('http://localhost:5678/webhook/e01d3830-43bf-427e-9f4f-2314970979ba/chat', {
+      const res = await fetch('http://localhost:5678/webhook/e41dc0ad-9a7f-4795-860d-a26f64bd1b85/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -99,15 +99,17 @@ const handleSave = async () => {
     setErrorMessage('')
     setSuccessMessage('')
 
-    const isRecipe = (() => {
-      const lower = result.toLowerCase()
-      return (
-        lower.includes('ingredients:') &&
-        lower.includes('instructions:') &&
-        /(\d+\.\s)/.test(lower) &&
-        lower.split('\n').some(line => line.trim().startsWith('-'))
-      )
-    })()
+ const isRecipe = (() => {
+  const lower = result.toLowerCase()
+  const hasIngredients = lower.includes('ingredients:')
+  const hasInstructions = lower.includes('instructions:')
+  const hasSteps = /(\d+\.\s)/.test(result)
+  const hasBullets = result.split('\n').some(line =>
+    line.trim().startsWith('-') || line.trim().startsWith('*')
+  )
+  return hasIngredients && hasInstructions && hasSteps && hasBullets
+})()
+
 
     const label = isRecipe ? 'recipe' : 'response'
 
