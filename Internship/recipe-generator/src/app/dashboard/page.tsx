@@ -1,4 +1,5 @@
 'use client'
+
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -10,6 +11,8 @@ import {
   SaveDialog
 } from '../components/dashboard'
 import { motion } from 'framer-motion'
+import { generateRecipe } from '@/lib/ai/webhook' 
+
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
   const [prompt, setPrompt] = useState('')
@@ -51,19 +54,8 @@ export default function Dashboard() {
       setSuccessMessage('')
       setLoadingGenerate(true)
 
-      const res = await fetch('http://localhost:5678/webhook/e41dc0ad-9a7f-4795-860d-a26f64bd1b85/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId: user?.email,
-          chatInput: prompt,
-        }),
-      })
-
-      if (!res.ok) throw new Error('Failed to generate recipe.')
-
-      const data = await res.json()
-      setResult(data.output)
+      const output = await generateRecipe(user?.email, prompt)
+      setResult(output)
 
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: 'smooth' })
