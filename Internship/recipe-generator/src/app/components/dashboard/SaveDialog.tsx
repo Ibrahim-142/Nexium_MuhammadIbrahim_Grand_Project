@@ -1,5 +1,4 @@
 'use client'
-
 import {
   Dialog,
   DialogContent,
@@ -32,9 +31,8 @@ export default function SaveDialog({
       <DialogContent className="rounded-xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-2xl border border-white/20 dark:border-white/10">
         <DialogHeader>
           <DialogTitle className="text-lg text-foreground">Save this recipe/response</DialogTitle>
-          <DialogDescription>
-            Don’t worry. We autodetect whether you are saving a Recipe or a Response based on our predefined Groq
-            response format, keywords, and structure.
+          <DialogDescription className="text-sm">
+            Don’t worry. We autodetect whether you are saving a Recipe or a Response based on the structure.
           </DialogDescription>
         </DialogHeader>
 
@@ -43,14 +41,14 @@ export default function SaveDialog({
           value={recipeName}
           onChange={(e) => setRecipeName(e.target.value)}
           disabled={loadingSave}
-          className="mt-2"
+          className="mt-2 text-sm sm:text-base"
         />
 
         <DialogFooter className="pt-4">
           <Button
             onClick={handleSave}
             disabled={loadingSave}
-            className="bg-gradient-to-br from-indigo-500 via-pink-500 to-orange-400 text-white w-full hover:bg-primary/90"
+            className="bg-gradient-to-br from-indigo-500 via-pink-500 to-orange-400 text-white w-full hover:bg-primary/90 text-sm sm:text-base py-2 sm:py-3"
           >
             {loadingSave && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
             {loadingSave ? 'Saving...' : 'Save Recipe/Response'}

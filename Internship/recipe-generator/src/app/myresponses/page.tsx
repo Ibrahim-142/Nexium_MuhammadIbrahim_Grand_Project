@@ -6,7 +6,7 @@ import { Plus, ClipboardCopy } from 'lucide-react'
 import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
-// import { toast } from 'sonner' // Optional: For copy confirmation
+import { toast } from 'sonner'
 
 interface Recipe {
   _id: string
@@ -46,18 +46,20 @@ export default function MyResponsesPage() {
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
-    // toast.success('Copied to clipboard!')
+    toast.success('Copied to clipboard!')
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Responses</h1>
+    <div className="px-4 py-6 sm:p-6 max-w-5xl mx-auto">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+          My Responses
+        </h1>
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
         >
-          <Plus className="w-4 h-4" /> Generate New
+          <Plus className="w-4 h-4" /> <span>Generate New</span>
         </Link>
       </div>
 
@@ -77,7 +79,7 @@ export default function MyResponsesPage() {
         </div>
       ) : responses.length === 0 ? (
         <div className="text-center mt-20">
-          <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">
+          <p className="text-gray-600 dark:text-gray-400 mb-4 text-base sm:text-lg">
             You haven&apos;t saved any responses yet.
           </p>
           <Link
@@ -95,8 +97,8 @@ export default function MyResponsesPage() {
               key={response._id}
               className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow hover:shadow-md transition flex flex-col"
             >
-              <div className="flex items-center justify-between mb-2">
-                <h2 className="text-lg font-semibold text-indigo-700 dark:text-indigo-400">
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <h2 className="text-base sm:text-lg font-semibold text-indigo-700 dark:text-indigo-400 break-words flex-1">
                   {response.recipeName}
                 </h2>
                 <Button

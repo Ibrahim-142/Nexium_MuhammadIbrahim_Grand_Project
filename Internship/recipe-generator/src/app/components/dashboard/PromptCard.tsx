@@ -12,50 +12,58 @@ export default function PromptCard({
   setPrompt,
   handleGenerate,
   loadingGenerate,
-  generating,
   errorMessage,
-  successMessage,
+  successMessage
 }: {
   userEmail: string | undefined
   prompt: string
   setPrompt: (v: string) => void
   handleGenerate: () => void
   loadingGenerate: boolean
-  generating: boolean
   errorMessage: string
   successMessage: string
 }) {
+  const emailName = userEmail?.split('@')[0] || 'Guest'
+
   return (
-    <Card className="bg-white/40 dark:bg-slate-800/40 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl rounded-3xl transition">
-      <CardHeader>
-        <CardTitle className="text-3xl font-extrabold bg-gradient-to-r from-indigo-400 via-pink-500 to-orange-400 bg-clip-text text-transparent animate-pulse tracking-tight">
-          Welcome, <span className="font-semibold italic">{userEmail}</span>
-        </CardTitle>
-      </CardHeader>
+    <div className="w-full mt-12">
+      <div className="max-w-3xl mx-auto w-full">
+        <Card className="bg-white/40 dark:bg-slate-800/40 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl rounded-3xl transition w-full">
+          <CardHeader>
+            <CardTitle className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-indigo-400 via-pink-500 to-orange-400 bg-clip-text text-transparent animate-pulse tracking-tight">
+              Welcome,
+              <span
+                className="ml-2 font-semibold italic truncate max-w-xs overflow-hidden whitespace-nowrap hidden sm:inline"
+                title={emailName}
+              >
+                {emailName}
+              </span>
+            </CardTitle>
+          </CardHeader>
 
-      <CardContent className="space-y-4">
-        {errorMessage && <FeedbackMessage type="error" message={errorMessage} />}
-        {successMessage && <FeedbackMessage type="success" message={successMessage} />}
+          <CardContent className="space-y-4">
+            {errorMessage && <FeedbackMessage type="error" message={errorMessage} />}
+            {successMessage && <FeedbackMessage type="success" message={successMessage} />}
 
-        <Textarea
-          placeholder="What do you want to cook?"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          disabled={loadingGenerate || generating}
-          className="min-h-[120px] rounded-xl border-accent focus:ring-2 focus:ring-primary/50 transition"
-        />
+            <Textarea
+              placeholder="What do you want to cook?"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              disabled={loadingGenerate}
+              className="min-h-[120px] rounded-xl border-accent focus:ring-2 focus:ring-primary/50 transition text-sm sm:text-base"
+            />
 
-        <Button
-          className="w-full bg-gradient-to-br from-indigo-500 via-pink-500 to-orange-400 text-white font-semibold shadow-md hover:brightness-110 transition"
-          disabled={loadingGenerate || generating || !prompt.trim()}
-          onClick={handleGenerate}
-        >
-          {(loadingGenerate || generating) && (
-            <Loader2 className="animate-spin w-4 h-4 mr-2" />
-          )}
-          {generating ? 'Generating Recipe...' : loadingGenerate ? 'Loading...' : 'Generate Recipe'}
-        </Button>
-      </CardContent>
-    </Card>
+            <Button
+              className="w-full text-sm sm:text-base py-2 sm:py-3 bg-gradient-to-br from-indigo-500 via-pink-500 to-orange-400 text-white hover:cursor-pointer font-semibold shadow-md hover:brightness-110 transition"
+              disabled={loadingGenerate || !prompt.trim()}
+              onClick={handleGenerate}
+            >
+              {loadingGenerate && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
+              {loadingGenerate ? 'Generating...' : 'Generate Recipe'}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   )
 }

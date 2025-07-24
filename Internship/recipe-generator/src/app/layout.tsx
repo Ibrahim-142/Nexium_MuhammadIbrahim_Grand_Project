@@ -4,12 +4,15 @@ import './globals.css'
 import LayoutWrapper from './components/LayoutWrapper'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
+
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
+
 export const metadata: Metadata = {
   title: 'AI-Recipe-Generator',
   description: 'Discover recipes instantly with Groq AI',
 }
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className="scroll-smooth" suppressHydrationWarning>
@@ -27,9 +30,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <LayoutWrapper>{children}
-<Toaster richColors position="top-center" />
-          </LayoutWrapper>
+          <Toaster position="top-center" richColors />
+          <LayoutWrapper>{children}</LayoutWrapper>
         </ThemeProvider>
       </body>
     </html>
