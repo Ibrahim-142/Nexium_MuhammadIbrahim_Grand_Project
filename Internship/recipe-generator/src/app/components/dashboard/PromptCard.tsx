@@ -1,4 +1,5 @@
 'use client'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -11,14 +12,16 @@ export default function PromptCard({
   setPrompt,
   handleGenerate,
   loadingGenerate,
+  generating,
   errorMessage,
-  successMessage
+  successMessage,
 }: {
   userEmail: string | undefined
   prompt: string
   setPrompt: (v: string) => void
   handleGenerate: () => void
   loadingGenerate: boolean
+  generating: boolean
   errorMessage: string
   successMessage: string
 }) {
@@ -38,17 +41,19 @@ export default function PromptCard({
           placeholder="What do you want to cook?"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          disabled={loadingGenerate}
+          disabled={loadingGenerate || generating}
           className="min-h-[120px] rounded-xl border-accent focus:ring-2 focus:ring-primary/50 transition"
         />
 
         <Button
           className="w-full bg-gradient-to-br from-indigo-500 via-pink-500 to-orange-400 text-white font-semibold shadow-md hover:brightness-110 transition"
-          disabled={loadingGenerate || !prompt.trim()}
+          disabled={loadingGenerate || generating || !prompt.trim()}
           onClick={handleGenerate}
         >
-          {loadingGenerate && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
-          Generate Recipe
+          {(loadingGenerate || generating) && (
+            <Loader2 className="animate-spin w-4 h-4 mr-2" />
+          )}
+          {generating ? 'Generating Recipe...' : loadingGenerate ? 'Loading...' : 'Generate Recipe'}
         </Button>
       </CardContent>
     </Card>

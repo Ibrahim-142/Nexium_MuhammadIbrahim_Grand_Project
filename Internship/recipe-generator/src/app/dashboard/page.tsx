@@ -11,7 +11,7 @@ import {
   SaveDialog
 } from '../components/dashboard'
 import { motion } from 'framer-motion'
-import { generateRecipe } from '@/lib/ai/webhook' 
+import { generateRecipe } from '@/lib/ai/webhook'
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
@@ -21,6 +21,7 @@ export default function Dashboard() {
   const [recipeName, setRecipeName] = useState('')
   const [loadingUser, setLoadingUser] = useState(true)
   const [loadingGenerate, setLoadingGenerate] = useState(false)
+  const [generating, setGenerating] = useState(false) // <-- NEW STATE
   const [loadingSave, setLoadingSave] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
@@ -53,6 +54,7 @@ export default function Dashboard() {
       setErrorMessage('')
       setSuccessMessage('')
       setLoadingGenerate(true)
+      setGenerating(true) // <-- START GENERATING
 
       const output = await generateRecipe(user?.email, prompt)
       setResult(output)
@@ -64,6 +66,7 @@ export default function Dashboard() {
       setErrorMessage('Failed to generate recipe. Please try again.')
     } finally {
       setLoadingGenerate(false)
+      setGenerating(false) // <-- END GENERATING
     }
   }
 
@@ -123,21 +126,34 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen px-4 py-10 sm:p-10 bg-gradient-to-br from-indigo-100 via-white to-pink-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 transition-colors duration-300">
       <div className="max-w-3xl mx-auto space-y-6">
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <PromptCard
             userEmail={user?.email}
             prompt={prompt}
             setPrompt={setPrompt}
             handleGenerate={handleGenerate}
             loadingGenerate={loadingGenerate}
+            generating={generating} // <-- PASSED DOWN
             errorMessage={errorMessage}
             successMessage={successMessage}
           />
         </motion.div>
 
         {result && (
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <ResultCard result={result} setShowDialog={setShowDialog} resultRef={resultRef} />
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <ResultCard
+              result={result}
+              setShowDialog={setShowDialog}
+              resultRef={resultRef}
+            />
           </motion.div>
         )}
 

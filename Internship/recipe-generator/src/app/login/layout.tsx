@@ -35,7 +35,7 @@ export default function LoginLayout({
           <div className="absolute left-0">
             <Link
               href="/"
-              className="font-semibold text-lg tracking-tight text-indigo-700 dark:text-indigo-300 hover:opacity-90 transition"
+              className="font-semibold text-lg tracking-tight text-pink-700 dark:text-indigo-300 hover:opacity-90 transition"
             >
               Dashboard
             </Link>
