@@ -110,7 +110,6 @@ export default function MyResponsesPage() {
                   <ClipboardCopy className="w-4 h-4 text-gray-500 hover:text-indigo-600" />
                 </Button>
               </div>
-
               <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line overflow-y-auto max-h-48 pr-1">
                 {response.recipeContent}
               </div>
