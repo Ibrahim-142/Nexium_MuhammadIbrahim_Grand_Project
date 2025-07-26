@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Plus, ClipboardCopy } from 'lucide-react'
+import { Plus, ClipboardCopy, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
@@ -34,7 +34,9 @@ export default function MyRecipesPage() {
         return
       }
 
-      const res = await fetch(`/api/get-from-mongo?userEmail=${user.email}&contentLabel=recipe`)
+      const res = await fetch(
+        `/api/get-from-mongo?userEmail=${user.email}&contentLabel=recipe`
+      )
       const data = await res.json()
 
       setRecipes(data?.data || [])
@@ -47,6 +49,34 @@ export default function MyRecipesPage() {
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
     toast.success('Copied to clipboard!')
+  }
+
+  const handleDelete = async (_id: string) => {
+    try {
+      const res = await fetch(`/api/delete-from-mongo?_id=${_id}`, {
+        method: 'DELETE',
+      })
+
+      const contentType = res.headers.get('content-type')
+      const isJson = contentType && contentType.includes('application/json')
+      const responseData = isJson ? await res.json() : null
+
+      if (!res.ok) {
+        const errorMsg =
+          responseData?.error || `Unexpected error: ${res.statusText}`
+        throw new Error(errorMsg)
+      }
+
+      setRecipes((prev) => prev.filter((r) => r._id !== _id))
+      toast.success('Recipe deleted successfully!')
+    } catch (err) {
+      console.error('[DELETE_ERROR]', err)
+      toast.error(
+        `Error deleting recipe: ${
+          err instanceof Error ? err.message : 'Unknown error'
+        }`
+      )
+    }
   }
 
   return (
@@ -101,14 +131,26 @@ export default function MyRecipesPage() {
                 <h2 className="text-base sm:text-lg font-semibold text-indigo-700 dark:text-indigo-400 break-words flex-1">
                   {recipe.recipeName}
                 </h2>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleCopy(recipe.recipeContent)}
-                  title="Copy to clipboard"
-                >
-                  <ClipboardCopy className="w-4 h-4 text-gray-500 hover:text-indigo-600" />
-                </Button>
+                <div className="flex  gap-1">
+                  <Button
+                  className='cursor-pointer'
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleCopy(recipe.recipeContent)}
+                    title="Copy to clipboard"
+                  >
+                    <ClipboardCopy className="w-4 h-4 hover:cursor-pointer text-gray-500 hover:text-indigo-600" />
+                  </Button>
+                  <Button
+                  className='cursor-pointer'
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(recipe._id)}
+                    title="Delete recipe"
+                  >
+                    <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700" />
+                  </Button>
+                </div>
               </div>
 
               <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line overflow-y-auto max-h-48 pr-1">

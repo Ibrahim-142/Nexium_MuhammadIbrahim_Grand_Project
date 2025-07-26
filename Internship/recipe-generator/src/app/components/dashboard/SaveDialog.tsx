@@ -32,7 +32,7 @@ export default function SaveDialog({
         <DialogHeader>
           <DialogTitle className="text-lg text-foreground">Save this recipe/response</DialogTitle>
           <DialogDescription className="text-sm">
-            Don’t worry. We autodetect whether you are saving a Recipe or a Response based on the structure.
+            Don’t worry. We autodetect whether you’re saving a Recipe or a Response based on our predifined Groq AI response structure.
           </DialogDescription>
         </DialogHeader>
 

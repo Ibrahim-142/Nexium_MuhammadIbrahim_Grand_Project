@@ -1,17 +1,13 @@
 'use client'
-
 import { useState } from 'react'
 import { Geist, Geist_Mono } from 'next/font/google'
-import Link from 'next/link'
 import '../globals.css'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { RotateCcw, Loader2 } from 'lucide-react'
 import { ThemeToggle } from '../components/theme-toggle'
-
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
-
 export default function LoginLayout({
   children,
 }: {
@@ -23,7 +19,6 @@ export default function LoginLayout({
     setRefreshing(true)
     window.location.reload()
   }
-
   return (
     <div
       className={`${geistSans.variable} ${geistMono.variable}
@@ -32,14 +27,18 @@ export default function LoginLayout({
     >
       <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-slate-200 dark:border-slate-700">
         <div className="relative max-w-6xl mx-auto px-4 py-3 h-14 flex items-center justify-center">
-          <div className="absolute left-0">
-            <Link
-              href="/"
-              className="font-semibold text-lg tracking-tight text-pink-700 dark:text-indigo-300 hover:opacity-90 transition"
-            >
-              Dashboard
-            </Link>
+          <div className="absolute left-4 flex items-center gap-2 text-sm italic text-slate-600 dark:text-slate-300">
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce [animation-delay:0s]" />
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce [animation-delay:0.15s]" />
+              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.3s]" />
+            </div>
+            <span className="font-medium text-base animate-text-flash bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+              Cooking meets AI
+            </span>
+
           </div>
+
 
           <div>
             <ThemeToggle />
@@ -47,10 +46,11 @@ export default function LoginLayout({
 
           <div className="absolute right-4">
             <Button
+
               variant="outline"
               onClick={handleRefresh}
               disabled={refreshing}
-              className="gap-2"
+              className="gap-2 hover:cursor-pointer"
             >
               {refreshing ? (
                 <>
@@ -68,7 +68,6 @@ export default function LoginLayout({
         </div>
         <Separator />
       </nav>
-
       <main className="flex flex-col items-center justify-center min-h-[calc(100vh-5rem)] px-4">
         {children}
       </main>
