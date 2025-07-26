@@ -2,44 +2,28 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
-import type { User } from '@supabase/supabase-js'
-import {
-  LoadingScreen,
-  PromptCard,
-  ResultCard,
-  SaveDialog
-} from '../components/dashboard'
+import { PromptCard, ResultCard, SaveDialog } from '../components/dashboard'
 import { motion } from 'framer-motion'
 import { generateRecipe } from '@/lib/ai/webhook'
 import { toast } from 'sonner'
+import { useAuth } from '@/app/components/LayoutWrapper'
 
 export default function Dashboard() {
-  const [user, setUser] = useState<User | null>(null)
+  const { user, isAuthenticated, isLoading } = useAuth()
   const [prompt, setPrompt] = useState('')
   const [result, setResult] = useState('')
   const [showDialog, setShowDialog] = useState(false)
   const [recipeName, setRecipeName] = useState('')
-  const [loadingUser, setLoadingUser] = useState(true)
   const [loadingGenerate, setLoadingGenerate] = useState(false)
   const [loadingSave, setLoadingSave] = useState(false)
   const resultRef = useRef<HTMLDivElement | null>(null)
-
   const router = useRouter()
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data } = await supabase.auth.getUser()
-      if (!data.user) {
-        router.push('/login')
-      } else {
-        setUser(data.user)
-      }
-      setLoadingUser(false)
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/login')
     }
-
-    fetchUser()
-  }, [router])
+  }, [isLoading, isAuthenticated, router])
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -50,7 +34,6 @@ export default function Dashboard() {
     try {
       setResult('')
       setLoadingGenerate(true)
-
       const output = await generateRecipe(user?.email, prompt)
       setResult(output)
 
@@ -98,7 +81,6 @@ export default function Dashboard() {
       })
 
       const data = await res.json()
-
       if (data.success) {
         toast.success('Saved successfully.')
         setShowDialog(false)
@@ -113,7 +95,16 @@ export default function Dashboard() {
     }
   }
 
-  if (loadingUser) return <LoadingScreen />
+  if (isLoading || (!isAuthenticated && typeof window !== 'undefined')) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-600 dark:text-gray-300">Checking authentication...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen px-4 py-10 sm:p-10 bg-gradient-to-br from-indigo-100 via-white to-pink-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 transition-colors duration-300 overflow-y-auto">

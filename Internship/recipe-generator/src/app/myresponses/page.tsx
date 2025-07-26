@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import { Plus, ClipboardCopy, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { useAuth } from '../components/LayoutWrapper'
 
 interface Recipe {
   _id: string
@@ -20,36 +20,38 @@ interface Recipe {
 }
 
 export default function MyResponsesPage() {
+  const { isAuthenticated, isLoading, user } = useAuth()
   const [responses, setResponses] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
-  const [authChecked, setAuthChecked] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/login')
+    }
+  }, [isAuthenticated, isLoading, router])
+
+  useEffect(() => {
+    if (!user) return
+
     const fetchResponses = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser()
-
-      if (error || !user) {
-        router.replace('/login')
-        return
+      try {
+        const res = await fetch(
+          `/api/get-from-mongo?userEmail=${user.email}&contentLabel=response`
+        )
+        const data = await res.json()
+        setResponses(data?.data || [])
+      } catch (err) {
+        console.error('[FETCH_RESPONSES_ERROR]', err)
+        toast.error('Failed to fetch responses.')
+      } finally {
+        setLoading(false)
       }
-
-      const res = await fetch(
-        `/api/get-from-mongo?userEmail=${user.email}&contentLabel=response`
-      )
-      const data = await res.json()
-
-      setResponses(data?.data || [])
-      setLoading(false)
-      setAuthChecked(true)
     }
 
     fetchResponses()
-  }, [router])
+  }, [user])
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -86,7 +88,7 @@ export default function MyResponsesPage() {
     }
   }
 
-  if (!authChecked) {
+  if (isLoading || (!isAuthenticated && typeof window !== 'undefined')) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="flex flex-col items-center gap-4">
