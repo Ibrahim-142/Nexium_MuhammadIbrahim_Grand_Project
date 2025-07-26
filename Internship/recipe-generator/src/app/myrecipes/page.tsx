@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Plus, ClipboardCopy, Trash2 } from 'lucide-react'
 import Link from 'next/link'
@@ -21,6 +22,9 @@ interface Recipe {
 export default function MyRecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -30,7 +34,7 @@ export default function MyRecipesPage() {
       } = await supabase.auth.getUser()
 
       if (error || !user) {
-        setLoading(false)
+        router.push('/login')
         return
       }
 
@@ -41,10 +45,11 @@ export default function MyRecipesPage() {
 
       setRecipes(data?.data || [])
       setLoading(false)
+      setAuthChecked(true)
     }
 
     fetchRecipes()
-  }, [])
+  }, [router])
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -52,6 +57,9 @@ export default function MyRecipesPage() {
   }
 
   const handleDelete = async (_id: string) => {
+    if (deletingId) return
+
+    setDeletingId(_id)
     try {
       const res = await fetch(`/api/delete-from-mongo?_id=${_id}`, {
         method: 'DELETE',
@@ -76,7 +84,20 @@ export default function MyRecipesPage() {
           err instanceof Error ? err.message : 'Unknown error'
         }`
       )
+    } finally {
+      setDeletingId(null)
     }
+  }
+
+  if (!authChecked) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-600 dark:text-gray-300">Checking authentication...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -113,7 +134,7 @@ export default function MyRecipesPage() {
             You haven&apos;t saved any recipes yet.
           </p>
           <Link
-            href="/"
+            href="/dashboard"
             className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 transition"
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -131,34 +152,42 @@ export default function MyRecipesPage() {
                 <h2 className="text-base sm:text-lg font-semibold text-indigo-700 dark:text-indigo-400 break-words flex-1">
                   {recipe.recipeName}
                 </h2>
-                <div className="flex  gap-1">
+                <div className="flex gap-1">
                   <Button
-                  className='cursor-pointer'
+                    className="cursor-pointer"
                     variant="ghost"
                     size="icon"
                     onClick={() => handleCopy(recipe.recipeContent)}
                     title="Copy to clipboard"
                   >
-                    <ClipboardCopy className="w-4 h-4 hover:cursor-pointer text-gray-500 hover:text-indigo-600" />
+                    <ClipboardCopy className="w-4 h-4 text-gray-500 hover:text-indigo-600" />
                   </Button>
                   <Button
-                  className='cursor-pointer'
+                    className="cursor-pointer"
                     variant="ghost"
                     size="icon"
                     onClick={() => handleDelete(recipe._id)}
+                    disabled={deletingId === recipe._id}
                     title="Delete recipe"
                   >
-                    <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700" />
+                    <Trash2
+                      className={`w-4 h-4 ${
+                        deletingId === recipe._id
+                          ? 'text-red-300 animate-pulse'
+                          : 'text-red-500 hover:text-red-700'
+                      }`}
+                    />
                   </Button>
                 </div>
               </div>
-
               <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line overflow-y-auto max-h-48 pr-1">
                 {recipe.recipeContent}
               </div>
             </li>
           ))}
+          
         </ul>
+        
       )}
     </div>
   )

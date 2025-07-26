@@ -1,11 +1,14 @@
 'use client'
+
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Plus, ClipboardCopy, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+
 interface Recipe {
   _id: string
   userEmail: string
@@ -19,6 +22,9 @@ interface Recipe {
 export default function MyResponsesPage() {
   const [responses, setResponses] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchResponses = async () => {
@@ -28,7 +34,7 @@ export default function MyResponsesPage() {
       } = await supabase.auth.getUser()
 
       if (error || !user) {
-        setLoading(false)
+        router.replace('/login')
         return
       }
 
@@ -39,10 +45,11 @@ export default function MyResponsesPage() {
 
       setResponses(data?.data || [])
       setLoading(false)
+      setAuthChecked(true)
     }
 
     fetchResponses()
-  }, [])
+  }, [router])
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -50,19 +57,19 @@ export default function MyResponsesPage() {
   }
 
   const handleDelete = async (_id: string) => {
+    if (deletingId) return
+
+    setDeletingId(_id)
     try {
       const res = await fetch(`/api/delete-from-mongo?_id=${_id}`, {
         method: 'DELETE',
       })
 
-      const contentType = res.headers.get('content-type')
-      const isJson = contentType && contentType.includes('application/json')
+      const isJson = res.headers.get('content-type')?.includes('application/json')
       const responseData = isJson ? await res.json() : null
 
       if (!res.ok) {
-        const errorMsg =
-          responseData?.error || `Unexpected error: ${res.statusText}`
-        throw new Error(errorMsg)
+        throw new Error(responseData?.error || res.statusText)
       }
 
       setResponses((prev) => prev.filter((r) => r._id !== _id))
@@ -74,7 +81,20 @@ export default function MyResponsesPage() {
           err instanceof Error ? err.message : 'Unknown error'
         }`
       )
+    } finally {
+      setDeletingId(null)
     }
+  }
+
+  if (!authChecked) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-600 dark:text-gray-300">Checking authentication...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -111,7 +131,7 @@ export default function MyResponsesPage() {
             You haven&apos;t saved any responses yet.
           </p>
           <Link
-            href="/"
+            href="/dashboard"
             className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 transition"
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -131,7 +151,7 @@ export default function MyResponsesPage() {
                 </h2>
                 <div className="flex gap-1">
                   <Button
-                  className='cursor-pointer'
+                    className="cursor-pointer"
                     variant="ghost"
                     size="icon"
                     onClick={() => handleCopy(response.recipeContent)}
@@ -140,13 +160,20 @@ export default function MyResponsesPage() {
                     <ClipboardCopy className="w-4 h-4 text-gray-500 hover:text-indigo-600" />
                   </Button>
                   <Button
-                  className='cursor-pointer'
+                    className="cursor-pointer"
                     variant="ghost"
                     size="icon"
                     onClick={() => handleDelete(response._id)}
+                    disabled={deletingId === response._id}
                     title="Delete response"
                   >
-                    <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700" />
+                    <Trash2
+                      className={`w-4 h-4 ${
+                        deletingId === response._id
+                          ? 'text-red-300 animate-pulse'
+                          : 'text-red-500 hover:text-red-700'
+                      }`}
+                    />
                   </Button>
                 </div>
               </div>
