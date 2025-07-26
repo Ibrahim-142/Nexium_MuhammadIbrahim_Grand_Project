@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
-import FeedbackMessage from './FeedbackMessage'
 
 export default function PromptCard({
   userEmail,
@@ -12,16 +11,12 @@ export default function PromptCard({
   setPrompt,
   handleGenerate,
   loadingGenerate,
-  errorMessage,
-  successMessage
 }: {
   userEmail: string | undefined
   prompt: string
   setPrompt: (v: string) => void
   handleGenerate: () => void
   loadingGenerate: boolean
-  errorMessage: string
-  successMessage: string
 }) {
   const emailName = userEmail?.split('@')[0] || 'Guest'
 
@@ -42,9 +37,6 @@ export default function PromptCard({
           </CardHeader>
 
           <CardContent className="space-y-4">
-            {errorMessage && <FeedbackMessage type="error" message={errorMessage} />}
-            {successMessage && <FeedbackMessage type="success" message={successMessage} />}
-
             <Textarea
               placeholder="What do you want to cook?"
               value={prompt}

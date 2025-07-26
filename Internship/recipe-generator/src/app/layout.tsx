@@ -30,7 +30,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Toaster position="top-center" richColors />
+          <Toaster
+            position="top-center"
+            theme="light"
+            toastOptions={{
+              className: `
+                bg-white dark:bg-black
+                text-black dark:text-white
+                border border-black/10 dark:border-white/20
+                shadow-md rounded-xl px-4 py-3
+              `,
+              descriptionClassName: 'text-xs text-gray-600 dark:text-gray-400 mt-1',
+              closeButton: true,
+              duration: 4000,
+            }}
+          />
           <LayoutWrapper>{children}</LayoutWrapper>
         </ThemeProvider>
       </body>

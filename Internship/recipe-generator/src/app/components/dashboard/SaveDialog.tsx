@@ -48,7 +48,7 @@ export default function SaveDialog({
           <Button
             onClick={handleSave}
             disabled={loadingSave}
-            className="bg-gradient-to-br from-indigo-500 via-pink-500 to-orange-400 text-white w-full hover:bg-primary/90 text-sm sm:text-base py-2 sm:py-3"
+            className="bg-gradient-to-br hover:cursor-pointer from-indigo-500 via-pink-500 to-orange-400 text-white w-full hover:brightness-110 transition hover:bg-primary/90 text-sm sm:text-base py-2 sm:py-3"
           >
             {loadingSave && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
             {loadingSave ? 'Saving...' : 'Save Recipe/Response'}

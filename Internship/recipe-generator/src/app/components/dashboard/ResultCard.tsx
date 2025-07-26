@@ -39,7 +39,7 @@ export default function ResultCard({
                 variant="outline"
                 size="sm"
                 onClick={handleCopy}
-                className="hover:bg-pink-200 dark:hover:bg-slate-700 transition text-xs sm:text-sm"
+                className="hover:bg-pink-200 hover:cursor-pointer dark:hover:bg-slate-700 transition text-xs sm:text-sm"
               >
                 {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                 <span className="ml-2">{copied ? 'Copied!' : 'Copy'}</span>
@@ -49,7 +49,7 @@ export default function ResultCard({
                 variant="secondary"
                 size="sm"
                 onClick={() => setShowDialog(true)}
-                className="hover:bg-pink-200 dark:hover:bg-slate-700 transition text-xs sm:text-sm"
+                className="hover:bg-pink-200 hover:cursor-pointer dark:hover:bg-slate-700 transition text-xs sm:text-sm"
               >
                 Save
               </Button>

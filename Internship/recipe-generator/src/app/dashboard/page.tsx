@@ -12,6 +12,7 @@ import {
 } from '../components/dashboard'
 import { motion } from 'framer-motion'
 import { generateRecipe } from '@/lib/ai/webhook'
+import { toast } from 'sonner'
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
@@ -22,8 +23,6 @@ export default function Dashboard() {
   const [loadingUser, setLoadingUser] = useState(true)
   const [loadingGenerate, setLoadingGenerate] = useState(false)
   const [loadingSave, setLoadingSave] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
   const resultRef = useRef<HTMLDivElement | null>(null)
 
   const router = useRouter()
@@ -44,14 +43,12 @@ export default function Dashboard() {
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
-      setErrorMessage('Please enter something to generate a recipe.')
+      toast.error('Please enter something to generate a recipe.')
       return
     }
 
     try {
       setResult('')
-      setErrorMessage('')
-      setSuccessMessage('')
       setLoadingGenerate(true)
 
       const output = await generateRecipe(user?.email, prompt)
@@ -61,7 +58,7 @@ export default function Dashboard() {
         resultRef.current?.scrollIntoView({ behavior: 'smooth' })
       }, 200)
     } catch {
-      setErrorMessage('Failed to generate recipe. Please try again.')
+      toast.error('Failed to generate recipe. Please try again.')
     } finally {
       setLoadingGenerate(false)
     }
@@ -69,14 +66,12 @@ export default function Dashboard() {
 
   const handleSave = async () => {
     if (!recipeName.trim()) {
-      setErrorMessage('Please enter a recipe name before saving.')
+      toast.error('Please enter a recipe name before saving.')
       return
     }
 
     try {
       setLoadingSave(true)
-      setErrorMessage('')
-      setSuccessMessage('')
 
       const isRecipe = (() => {
         const lower = result.toLowerCase()
@@ -105,14 +100,14 @@ export default function Dashboard() {
       const data = await res.json()
 
       if (data.success) {
-        setSuccessMessage('Saved successfully.')
+        toast.success('Saved successfully.')
         setShowDialog(false)
         setRecipeName('')
       } else {
         throw new Error(data.error || 'Unknown error')
       }
     } catch {
-      setErrorMessage('Failed to save recipe. Please try again.')
+      toast.error('Failed to save recipe. Please try again.')
     } finally {
       setLoadingSave(false)
     }
@@ -124,33 +119,35 @@ export default function Dashboard() {
     <div className="min-h-screen px-4 py-10 sm:p-10 bg-gradient-to-br from-indigo-100 via-white to-pink-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 transition-colors duration-300 overflow-y-auto">
       <div className="max-w-3xl w-full mx-auto flex flex-col gap-6 sm:gap-8">
         <motion.div
-  className="w-full"
-  initial={{ opacity: 0, y: -10 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.6 }}
->
-  <PromptCard
-    userEmail={user?.email}
-    prompt={prompt}
-    setPrompt={setPrompt}
-    handleGenerate={handleGenerate}
-    loadingGenerate={loadingGenerate}
-    errorMessage={errorMessage}
-    successMessage={successMessage}
-  />
-</motion.div>
+          className="w-full"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <PromptCard
+            userEmail={user?.email}
+            prompt={prompt}
+            setPrompt={setPrompt}
+            handleGenerate={handleGenerate}
+            loadingGenerate={loadingGenerate}
+          />
+        </motion.div>
 
-{result && (
-  <motion.div
-    className="w-full"
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-    ref={resultRef}
-  >
-    <ResultCard result={result} setShowDialog={setShowDialog} resultRef={resultRef} />
-  </motion.div>
-)}
+        {result && (
+          <motion.div
+            className="w-full"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            ref={resultRef}
+          >
+            <ResultCard
+              result={result}
+              setShowDialog={setShowDialog}
+              resultRef={resultRef}
+            />
+          </motion.div>
+        )}
 
         <SaveDialog
           showDialog={showDialog}
