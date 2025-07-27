@@ -51,7 +51,7 @@ export default function PromptCard({
               onClick={handleGenerate}
             >
               {loadingGenerate && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
-              {loadingGenerate ? 'Generating...' : 'Generate Recipe'}
+              {loadingGenerate ? 'Generating...' : 'Generate Recipe/Response'}
             </Button>
           </CardContent>
         </Card>
