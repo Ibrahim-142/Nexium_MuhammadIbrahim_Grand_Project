@@ -33,7 +33,8 @@ A full-stack AI recipe generator built using **Next.js App Router**, **Supabase 
 6. Users can view or delete saved entries under `/recipes` or `/responses`
 
 ---
-
+## Loom Walkthrough
+https://www.loom.com/share/2ad00627af88439dabf6bfc958b70d5b?sid=38046a61-b5bd-4d77-ba72-f9f2cec23d62
 ## Tech Stack
 
 | Layer       | Stack                                  |
