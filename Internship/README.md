@@ -38,8 +38,8 @@ A full-stack AI recipe generator built using **Next.js App Router**, **Supabase 
 
 ## Loom Walkthrough
 
-- **Online**: [Watch on Loom](https://www.loom.com/share/2ad00627af88439dabf6bfc958b70d5b?sid=38046a61-b5bd-4d77-ba72-f9f2cec23d62)  
-- **Local**: `Internship/recipe-generator/public/loom_720p.mp4`
+- **Online**: [Watch on Loom](https://www.loom.com/share/38092fa103744dd38d0e3f1df3814197?sid=73476ee2-d2d1-4758-aab7-9cadf5a02328)  
+- **Local**: `Internship/recipe-generator/public/loom.mp4`
 
 ---
 
