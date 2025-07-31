@@ -1,6 +1,7 @@
-# AI Recipe Generator — Powered by Groq, n8n, Supabase & MongoDB
+# **AI Recipe Generator — Powered by Groq, n8n, Supabase & MongoDB**
 
-A full-stack AI recipe generator built using **Next.js App Router**, **Supabase Auth**, **MongoDB**, and **Groq AI** via **n8n integration**. Automatically classifies and saves recipes or general responses to MongoDB with a smooth UX.
+A full-stack AI recipe generator built using **Next.js App Router**, **Supabase Auth**, **MongoDB**, and **Groq AI** via **n8n integration**. Automatically classifies and saves recipes or general responses to MongoDB with a smooth UX.  
+**Now fully responsive across all devices.**
 
 > Custom AI agent via n8n: `AIRecipeGeneratorIbrahim`
 
@@ -17,7 +18,8 @@ A full-stack AI recipe generator built using **Next.js App Router**, **Supabase 
   - `/recipes` — View saved recipes
   - `/responses` — View saved non-recipe responses
 - Dark/light theme toggle
-- Toast notifications, skeleton loaders, and transitions
+- Toast notifications, skeleton loaders, and transitions  
+- **Responsive design for mobile, tablet, and desktop**
 
 ---
 
@@ -33,9 +35,14 @@ A full-stack AI recipe generator built using **Next.js App Router**, **Supabase 
 6. Users can view or delete saved entries under `/recipes` or `/responses`
 
 ---
+
 ## Loom Walkthrough
-Online:https://www.loom.com/share/2ad00627af88439dabf6bfc958b70d5b?sid=38046a61-b5bd-4d77-ba72-f9f2cec23d62
-Local(Downloaded from Loom):Internship/recipe-generator/public/loom_720p.mp4
+
+- **Online**: [Watch on Loom](https://www.loom.com/share/2ad00627af88439dabf6bfc958b70d5b?sid=38046a61-b5bd-4d77-ba72-f9f2cec23d62)  
+- **Local**: `Internship/recipe-generator/public/loom_720p.mp4`
+
+---
+
 ## Tech Stack
 
 | Layer       | Stack                                  |
@@ -45,5 +52,3 @@ Local(Downloaded from Loom):Internship/recipe-generator/public/loom_720p.mp4
 | AI Backend  | Groq via n8n webhook                   |
 | Database    | MongoDB Atlas                          |
 | UI          | shadcn/ui, Framer Motion, Sonner       |
-
----
